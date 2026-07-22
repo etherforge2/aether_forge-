@@ -696,3 +696,203 @@ function DashboardPage({ user, setPage, setShowAuth }) {
               {[["7", "Total Referrals"], ["$348.50", "Earned"], ["$82.00", "Pending"]].map(([v, l]) => (
                 <div key={l} style={{ background: "rgba(0,0,0,0.3)", borderRadius: 10, padding: isMobile ? "14px 12px" : "18px 16px" }}>
                   <div style={{ fontSize: isMobile ? 18 : 22, fontWeight: 800, color: PALETTE.gold }}>{v}</div>
+                  <div style={{ fontSize: 12, color: PALETTE.textMuted, marginTop: 4 }}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PaymentPage({ plan, user, setPage, setShowAuth }) {
+  const isMobile = useIsMobile();
+  const [selected, setSelected] = useState(CRYPTO_WALLETS[0]);
+const [amount, setAmount] = useState(plan?.min ?? 500);
+  const [copied, setCopied] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const copyAddr = () => { navigator.clipboard.writeText(selected.addr).catch(() => {}); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+
+  if (!user) return (
+    <div style={{ maxWidth: 460, margin: "80px auto", padding: "0 16px", textAlign: "center" }}>
+      <div style={{ ...S.glassCard, padding: 40 }}>
+        <div style={{ fontSize: 40, marginBottom: 14 }}>🔐</div>
+        <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 10 }}>Login Required</div>
+        <div style={{ color: PALETTE.textMuted, marginBottom: 24, fontSize: 14 }}>Please sign in to invest.</div>
+        <button onClick={() => setShowAuth("login")} style={{ ...S.tealBtn, padding: "13px 36px", fontSize: 15 }}>Sign In</button>
+      </div>
+    </div>
+  );
+
+  if (done) return (
+    <div style={{ maxWidth: 500, margin: "60px auto", padding: "0 16px", textAlign: "center" }}>
+      <div style={{ ...S.glassCard, padding: isMobile ? 28 : 44 }}>
+        <div style={{ width: 68, height: 68, borderRadius: "50%", background: "rgba(72,187,120,0.15)", border: `2px solid ${PALETTE.success}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", fontSize: 30 }}>✓</div>
+        <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 10 }}>Payment Submitted</div>
+        <div style={{ color: PALETTE.textMuted, lineHeight: 1.7, marginBottom: 24, fontSize: 14 }}>Your {fmtUSD(amount)} investment in <strong style={{ color: PALETTE.teal }}>{plan.name}</strong> is pending confirmation. Email incoming within 30 minutes.</div>
+        <button onClick={() => setPage("dashboard")} style={{ ...S.tealBtn, padding: "13px 36px", fontSize: 15 }}>Go to Dashboard</button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: isMobile ? "28px 16px" : "48px 24px" }}>
+      <div style={{ marginBottom: 28 }}>
+        <div style={S.badge}>Secure Payment</div>
+        <h1 style={{ fontSize: isMobile ? 24 : 32, fontWeight: 800, marginTop: 10, marginBottom: 6 }}>Complete Your Investment</h1>
+        <div style={{ color: PALETTE.textMuted, fontSize: 13 }}>Military-grade encrypted transaction.</div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20 }}>
+        {/* Left */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ ...S.glassCard, padding: isMobile ? 20 : 24 }}>
+            <div style={{ fontSize: 11, color: PALETTE.textMuted, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 12 }}>Selected Plan</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+              <div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: plan?.color ?? PALETTE.teal }}>{plan?.name}</div>
+                <div style={{ fontSize: 12, color: PALETTE.textMuted }}>{plan?.daily}% daily · {plan?.duration} days</div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: 20, fontWeight: 800, color: PALETTE.success }}>+{(plan?.daily * plan?.duration).toFixed(1)}%</div>
+                <div style={{ fontSize: 11, color: PALETTE.textMuted }}>Total ROI</div>
+              </div>
+            </div>
+            <label style={S.label}>Investment Amount (USD)</label>
+            <div style={{ position: "relative" }}>
+              <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: PALETTE.teal, fontWeight: 700 }}>$</span>
+              <input type="number" min={plan?.min} max={plan?.max} value={amount} onChange={e => setAmount(Number(e.target.value))} style={{ ...S.input, paddingLeft: 28 }} />
+            </div>
+            <div style={{ fontSize: 12, color: PALETTE.textMuted, marginTop: 6 }}>Range: {fmtUSD(plan?.min)} – {fmtUSD(plan?.max)}</div>
+          </div>
+          <div style={{ ...S.glassCard, padding: isMobile ? 20 : 24 }}>
+            <div style={{ fontSize: 11, color: PALETTE.textMuted, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 14 }}>Estimated Returns</div>
+            {[
+              ["Daily Earnings", amount * (plan?.daily ?? 3.8) / 100],
+              [`Total (${plan?.duration} days)`, amount * (plan?.daily ?? 3.8) / 100 * (plan?.duration ?? 5)],
+              ["Capital + Profit", amount + amount * (plan?.daily ?? 3.8) / 100 * (plan?.duration ?? 5)],
+            ].map(([l, v], i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, paddingBottom: 12, borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                <span style={{ color: PALETTE.textMuted, fontSize: 13 }}>{l}</span>
+                <span style={{ fontWeight: 700, color: i === 2 ? PALETTE.success : PALETTE.text, fontSize: 14 }}>{fmtUSD(v)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right */}
+        <div style={{ ...S.glassCard, padding: isMobile ? 20 : 24 }}>
+          <div style={{ fontSize: 11, color: PALETTE.textMuted, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 14 }}>Select Crypto</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 20 }}>
+            {CRYPTO_WALLETS.map(w => (
+              <button key={w.id} onClick={() => setSelected(w)} style={{ background: selected.id === w.id ? `rgba(0,212,170,0.1)` : "rgba(0,0,0,0.3)", border: `1.5px solid ${selected.id === w.id ? w.color : "rgba(255,255,255,0.06)"}`, borderRadius: 10, padding: "10px 12px", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, transition: "all .15s" }}>
+                <span style={{ fontSize: 16, color: w.color }}>{w.icon}</span>
+                <div style={{ textAlign: "left" }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: PALETTE.text }}>{w.sym}</div>
+                  <div style={{ fontSize: 10, color: PALETTE.textMuted }}>{w.name}</div>
+                </div>
+              </button>
+            ))}
+          </div>
+          <div style={{ fontSize: 13, color: PALETTE.textMuted, textAlign: "center", marginBottom: 10 }}>
+            Send <strong style={{ color: PALETTE.gold }}>{fmtUSD(amount)}</strong> in <strong style={{ color: selected.color }}>{selected.sym}</strong>
+          </div>
+          <div style={{ fontSize: 11, color: PALETTE.textMuted, textAlign: "center", marginBottom: 14 }}>Network: {selected.network}</div>
+          <div style={{ background: "rgba(0,0,0,0.4)", borderRadius: 10, padding: "12px 14px", display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+            <span style={{ fontFamily: "monospace", fontSize: 10, color: PALETTE.textMuted, flex: 1, wordBreak: "break-all" }}>{selected.addr}</span>
+            <button onClick={copyAddr} style={{ ...S.tealBtn, padding: "7px 12px", fontSize: 12, flexShrink: 0 }}>{copied ? "✓" : "Copy"}</button>
+          </div>
+          <div style={{ background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 10, padding: 12, marginBottom: 18, fontSize: 12, color: PALETTE.gold, lineHeight: 1.6 }}>
+            ⚠️ Only send {selected.sym} on {selected.network}. Other tokens may be lost.
+          </div>
+          <button onClick={() => setDone(true)} style={{ ...S.tealBtn, width: "100%", padding: "14px 0", fontSize: 14 }}>I Have Sent the Payment →</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AffiliatePage() {
+  const isMobile = useIsMobile();
+  return (
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: isMobile ? "40px 16px" : "60px 24px" }}>
+      <div style={{ textAlign: "center", marginBottom: 48 }}>
+        <div style={S.badge}>Affiliate Program</div>
+        <h1 style={{ fontSize: isMobile ? 26 : 40, fontWeight: 800, letterSpacing: "-0.03em", marginTop: 12, marginBottom: 12 }}>Earn While Others Grow</h1>
+        <div style={{ color: PALETTE.textMuted, maxWidth: 480, margin: "0 auto", fontSize: isMobile ? 13 : 15 }}>Refer investors and earn 5% commission on every investment they make. No cap, no expiry.</div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: 14, marginBottom: 36 }}>
+        {[
+          { step: "1", title: "Register", desc: "Create an account and get your unique referral link." },
+          { step: "2", title: "Share", desc: "Share via social media, email or any channel." },
+          { step: "3", title: "Earn", desc: "5% credited to your balance for every investment." },
+          { step: "4", title: "Withdraw", desc: "Transfer commissions to any crypto wallet anytime." },
+        ].map((s, i) => (
+          <div key={i} style={{ ...S.glassCard, padding: isMobile ? "18px 14px" : 24, textAlign: isMobile ? "center" : "left" }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg,${PALETTE.teal},#006B55)`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 16, color: "#fff", margin: isMobile ? "0 auto 12px" : "0 0 14px" }}>{s.step}</div>
+            <div style={{ fontWeight: 700, marginBottom: 6, fontSize: 14 }}>{s.title}</div>
+            <div style={{ fontSize: 12, color: PALETTE.textMuted, lineHeight: 1.6 }}>{s.desc}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ ...S.glassCard, padding: isMobile ? 24 : 36, textAlign: "center" }}>
+        <div style={{ fontSize: isMobile ? 44 : 56, fontWeight: 900, color: PALETTE.teal, marginBottom: 6 }}>5%</div>
+        <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 6 }}>Commission on Every Investment</div>
+        <div style={{ color: PALETTE.textMuted, marginBottom: 28, fontSize: 14 }}>Top affiliates earn $10,000+/month.</div>
+        <div style={{ display: "flex", gap: isMobile ? 24 : 48, justifyContent: "center", marginBottom: 28, flexWrap: "wrap" }}>
+          {[["$2.4M+", "Paid to Affiliates"], ["1,240+", "Active Affiliates"], ["Instant", "Crediting"]].map(([v, l]) => (
+            <div key={l} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 800, color: PALETTE.gold }}>{v}</div>
+              <div style={{ fontSize: 12, color: PALETTE.textMuted }}>{l}</div>
+            </div>
+          ))}
+        </div>
+        <button style={{ ...S.tealBtn, padding: isMobile ? "13px 28px" : "14px 40px", fontSize: 15 }}>Join the Affiliate Program →</button>
+      </div>
+    </div>
+  );
+}
+
+function FAQPage() {
+  const [open, setOpen] = useState(null);
+  const isMobile = useIsMobile();
+  const faqs = [
+    { q: "How do investment returns work?", a: "Returns are calculated daily at the specified rate and credited directly to your balance. You can reinvest or withdraw after the plan matures." },
+    { q: "Is my investment safe?", a: "AetherForge uses AES-256 encryption, cold storage, and multi-signature wallets. We are regulated by the FCA (UK) and MAS (Singapore) with mandatory capital reserves." },
+    { q: "How do I withdraw my funds?", a: "Go to Dashboard > Withdraw, enter the amount and wallet address. Most withdrawals process within 12–24 hours. Minimum is $50." },
+    { q: "What cryptocurrencies are accepted?", a: "We accept BTC, ETH, USDT, USDC, BNB, SOL, TRX, LTC, DOGE, BCH, and more. Select your currency on the payment page." },
+    { q: "Can I run multiple plans?", a: "Yes — run as many plans simultaneously as you like. Each operates independently with its own schedule and returns." },
+    { q: "What is the referral commission?", a: "5% on all investments made by referred users, credited to your balance automatically and instantly." },
+    { q: "Is KYC required?", a: "KYC is required for withdrawals above $5,000 to comply with AML regulations. We use Onfido for fast, encrypted verification." },
+    { q: "What is the win rate?", a: "Our AI engine maintains a 91%+ win rate with strict stop-losses and position sizing. Your principal is always protected within plan parameters." },
+  ];
+  return (
+    <div style={{ maxWidth: 720, margin: "0 auto", padding: isMobile ? "40px 16px" : "60px 24px" }}>
+      <div style={{ textAlign: "center", marginBottom: 44 }}>
+        <div style={S.badge}>FAQ</div>
+        <h1 style={{ fontSize: isMobile ? 26 : 40, fontWeight: 800, letterSpacing: "-0.03em", marginTop: 12, marginBottom: 10 }}>Frequently Asked Questions</h1>
+        <div style={{ color: PALETTE.textMuted, fontSize: 14 }}>Can't find your answer? Contact our 24/7 support team.</div>
+    </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {faqs.map((f, i) => (
+          <div key={i} style={{ ...S.glassCard, overflow: "hidden" }}>
+            <button onClick={() => setOpen(open === i ? null : i)} style={{ width: "100%", background: "none", border: "none", color: PALETTE.text, padding: "18px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", gap: 12 }}>
+              <span style={{ fontWeight: 600, fontSize: isMobile ? 14 : 15, textAlign: "left" }}>{f.q}</span>
+              <span style={{ color: PALETTE.teal, fontSize: 20, flexShrink: 0, transition: "transform .2s", transform: open === i ? "rotate(45deg)" : "none" }}>+</span>
+            </button>
+            {open === i && <div style={{ padding: "0 20px 18px", color: PALETTE.textMuted, fontSize: 14, lineHeight: 1.8 }}>{f.a}</div>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ContactPage() {
+  const isMobile = useIsMobile();
+  return (
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: isMobile ? "40px 16px" : "60px 24px" }}>
+      <div style={{ textAlign: "center", marginBottom: 44 }}>
+        <div style={S.badge}>24/7 Support</div>
