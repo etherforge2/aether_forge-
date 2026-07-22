@@ -496,4 +496,203 @@ function PlansPage({ setPage, setSelectedPlan }) {
 
 function MarketsPage({ prices }) {
   const isMobile = useIsMobile();
+  return (    <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "40px 16px" : "60px 24px" }}>
+      <div style={{ marginBottom: 32 }}>
+        <div style={S.badge}>Live Markets</div>
+        <h1 style={{ fontSize: isMobile ? 26 : 38, fontWeight: 800, letterSpacing: "-0.03em", marginTop: 12, marginBottom: 8 }}>Real-Time Market Data</h1>
+        <div style={{ color: PALETTE.textMuted, fontSize: 13 }}>Prices update every 2 seconds.</div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(auto-fill,minmax(200px,1fr))", gap: 12 }}>
+        {prices.map((a, i) => (
+          <div key={i} style={{ ...S.glassCard, padding: isMobile ? "14px 14px" : "16px 18px" }}>
+            <div style={{ fontWeight: 700, fontSize: isMobile ? 13 : 14, marginBottom: 6 }}>{a.sym}</div>
+            <div style={{ fontSize: isMobile ? 16 : 19, fontWeight: 800, fontVariantNumeric: "tabular-nums", marginBottom: 4 }}>{a.price > 100 ? fmtUSD(a.price) : `$${a.price.toFixed(4)}`}</div>
+            <div style={{ fontSize: 12, color: a.chg >= 0 ? PALETTE.success : PALETTE.danger }}>{a.chg >= 0 ? "▲" : "▼"} {Math.abs(a.chg).toFixed(2)}%</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DashboardPage({ user, setPage, setShowAuth }) {
+  const isMobile = useIsMobile();
+  const [tab, setTab] = useState("overview");
+
+  if (!user) return (
+    <div style={{ maxWidth: 480, margin: "80px auto", padding: "0 16px", textAlign: "center" }}>
+      <div style={{ ...S.glassCard, padding: 40 }}>
+        <div style={{ fontSize: 44, marginBottom: 16 }}>🔐</div>
+        <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 10 }}>Dashboard Access</div>
+        <div style={{ color: PALETTE.textMuted, marginBottom: 24, fontSize: 14 }}>Please sign in to view your dashboard.</div>
+        <button onClick={() => setShowAuth("login")} style={{ ...S.tealBtn, padding: "13px 36px", fontSize: 15 }}>Sign In</button>
+      </div>
+    </div>
+  );
+
+  const tabs = ["overview", "trades", "withdraw", "referral"];
+  const mockBalance = 12480.50, mockProfit = 1842.30;
+
   return (
+    <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "24px 16px" : "40px 24px" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28, flexWrap: "wrap", gap: 12 }}>
+        <div>
+          <div style={{ fontSize: 13, color: PALETTE.textMuted }}>Welcome back,</div>
+          <h1 style={{ fontSize: isMobile ? 22 : 28, fontWeight: 800 }}>{user.name}</h1>
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button onClick={() => setPage("plans")} style={{ ...S.tealBtn, padding: isMobile ? "10px 16px" : "11px 20px", fontSize: 13 }}>+ Invest</button>
+          <button style={{ ...S.outlineBtn, padding: isMobile ? "10px 16px" : "11px 20px", fontSize: 13 }}>Withdraw</button>
+        </div>
+      </div>
+
+      {/* Balance cards */}
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: 12, marginBottom: 24 }}>
+        {[
+          { label: "Total Balance", val: fmtUSD(mockBalance), color: PALETTE.teal, icon: "💰" },
+          { label: "Total Profit", val: fmtUSD(mockProfit), color: PALETTE.success, icon: "📈" },
+          { label: "Active Plans", val: "2", color: PALETTE.gold, icon: "⚡" },
+          { label: "Withdrawn", val: fmtUSD(5200), color: PALETTE.textMuted, icon: "🏦" },
+        ].map((c, i) => (
+          <div key={i} style={{ ...S.glassCard, padding: isMobile ? "14px 14px" : "18px 20px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <span style={{ fontSize: 12, color: PALETTE.textMuted }}>{c.label}</span>
+              <span style={{ fontSize: 18 }}>{c.icon}</span>
+            </div>
+            <div style={{ fontSize: isMobile ? 16 : 22, fontWeight: 800, color: c.color, fontVariantNumeric: "tabular-nums" }}>{c.val}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: "flex", gap: 4, marginBottom: 24, background: "rgba(0,0,0,0.3)", borderRadius: 12, padding: 4, overflowX: "auto", width: "fit-content", maxWidth: "100%" }}>
+        {tabs.map(t => (
+          <button key={t} onClick={() => setTab(t)} style={{ padding: isMobile ? "9px 14px" : "10px 18px", border: "none", borderRadius: 8, fontWeight: 600, fontSize: isMobile ? 12 : 13, cursor: "pointer", textTransform: "capitalize", whiteSpace: "nowrap", background: tab === t ? PALETTE.teal : "transparent", color: tab === t ? "#080C18" : PALETTE.textMuted, transition: "all .2s" }}>{t}</button>
+        ))}
+      </div>
+
+      {tab === "overview" && (
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20 }}>
+          {/* Active Plans */}
+          <div style={{ ...S.glassCard, padding: 22 }}>
+            <div style={{ fontWeight: 700, marginBottom: 18, fontSize: 15 }}>Active Plans</div>
+            {[
+              { name: "Gold Plan", invested: 900, daily: 3.8, progress: 60, remaining: 2 },
+              { name: "Platinum Plan", invested: 11580, daily: 5.2, progress: 35, remaining: 5 },
+            ].map((p, i) => (
+              <div key={i} style={{ background: "rgba(0,0,0,0.3)", borderRadius: 12, padding: 16, marginBottom: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                  <span style={{ fontWeight: 700, fontSize: 14 }}>{p.name}</span>
+                  <span style={{ color: PALETTE.teal, fontSize: 13 }}>{p.daily}%/day</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: PALETTE.textMuted, marginBottom: 10 }}>
+                  <span>{fmtUSD(p.invested)}</span><span>{p.remaining} days left</span>
+                </div>
+                <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2, overflow: "hidden" }}>
+                  <div style={{ width: `${p.progress}%`, height: "100%", background: `linear-gradient(90deg,${PALETTE.teal},${PALETTE.gold})` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Transactions */}
+          <div style={{ ...S.glassCard, padding: 22 }}>
+            <div style={{ fontWeight: 700, marginBottom: 18, fontSize: 15 }}>Recent Transactions</div>
+            {[
+              { type: "Deposit", amt: 900, date: "Jun 18", icon: "↓", pos: true },
+              { type: "Profit Credit", amt: 34.20, date: "Jun 19", icon: "+", pos: true },
+              { type: "Deposit", amt: 11580, date: "Jun 15", icon: "↓", pos: true },
+              { type: "Withdrawal", amt: 2200, date: "Jun 10", icon: "↑", pos: false },
+            ].map((tx, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, paddingBottom: 14, borderBottom: i < 3 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
+                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <div style={{ width: 34, height: 34, borderRadius: 9, background: tx.pos ? "rgba(72,187,120,0.12)" : "rgba(245,101,101,0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: tx.pos ? PALETTE.success : PALETTE.danger, fontWeight: 700 }}>{tx.icon}</div>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: 13 }}>{tx.type}</div>
+                    <div style={{ fontSize: 11, color: PALETTE.textMuted }}>{tx.date}</div>
+                  </div>
+                </div>
+                <div style={{ color: tx.pos ? PALETTE.success : PALETTE.danger, fontWeight: 700, fontSize: 14 }}>{tx.pos ? "+" : "-"}{fmtUSD(tx.amt)}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {tab === "trades" && (
+        isMobile ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {LIVE_TRADES.map((t, i) => (
+              <div key={i} style={{ ...S.glassCard, padding: "14px 16px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <span style={{ fontWeight: 700 }}>{t.asset}</span>
+                    <span style={{ background: t.type === "BUY" ? "rgba(72,187,120,0.15)" : "rgba(245,101,101,0.15)", color: t.type === "BUY" ? PALETTE.success : PALETTE.danger, borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 700 }}>{t.type}</span>
+                  </div>
+                  <span style={{ color: PALETTE.success, fontWeight: 700 }}>+{fmtUSD(t.pnl)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: PALETTE.textMuted }}>
+                  <span>{fmtUSD(t.entry)} → {fmtUSD(t.exit)}</span><span>{t.time}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ ...S.glassCard, overflow: "hidden" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead><tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                {["Time","Asset","Type","Entry","Exit","P&L","Return"].map(h => <th key={h} style={{ padding: "13px 16px", textAlign: "left", fontSize: 11, color: PALETTE.textMuted, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>{h}</th>)}
+              </tr></thead>
+              <tbody>{LIVE_TRADES.map((t, i) => (
+                <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                  <td style={{ padding: "12px 16px", fontSize: 12, fontFamily: "monospace", color: PALETTE.textMuted }}>{t.time}</td>
+                  <td style={{ padding: "12px 16px", fontWeight: 700 }}>{t.asset}</td>
+                  <td style={{ padding: "12px 16px" }}><span style={{ background: t.type==="BUY"?"rgba(72,187,120,0.15)":"rgba(245,101,101,0.15)", color: t.type==="BUY"?PALETTE.success:PALETTE.danger, borderRadius: 6, padding: "3px 10px", fontSize: 12, fontWeight: 700 }}>{t.type}</span></td>
+                  <td style={{ padding: "12px 16px", fontSize: 13 }}>{fmtUSD(t.entry)}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 13 }}>{fmtUSD(t.exit)}</td>
+                  <td style={{ padding: "12px 16px", color: PALETTE.success, fontWeight: 700 }}>+{fmtUSD(t.pnl)}</td>
+                  <td style={{ padding: "12px 16px", color: PALETTE.success }}>+{t.pct}%</td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
+        )
+      )}
+
+      {tab === "withdraw" && (
+        <div style={{ maxWidth: 500 }}>
+          <div style={{ ...S.glassCard, padding: isMobile ? 20 : 30 }}>
+            <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 20 }}>Request Withdrawal</div>
+            <div style={{ background: "rgba(0,212,170,0.06)", border: "1px solid rgba(0,212,170,0.15)", borderRadius: 10, padding: 16, marginBottom: 20 }}>
+              <div style={{ fontSize: 12, color: PALETTE.textMuted, marginBottom: 4 }}>Available Balance</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: PALETTE.teal }}>{fmtUSD(mockBalance)}</div>
+            </div>
+            {[["Amount (USD)", "number", "500"], ["Wallet Address", "text", "Your wallet address..."]].map(([l, t, p]) => (
+              <div key={l} style={{ marginBottom: 14 }}><label style={S.label}>{l}</label><input style={S.input} type={t} placeholder={p} defaultValue={t === "number" ? p : ""} /></div>
+            ))}
+            <div style={{ marginBottom: 20 }}>
+              <label style={S.label}>Payment Method</label>
+              <select style={{ ...S.input, appearance: "none" }}>{CRYPTO_WALLETS.map(w => <option key={w.id}>{w.sym} – {w.name}</option>)}</select>
+            </div>
+            <div style={{ background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 10, padding: 12, marginBottom: 18, fontSize: 12, color: PALETTE.gold, lineHeight: 1.6 }}>⏱ Processed within 12–24 hours. Minimum: $50.</div>
+            <button style={{ ...S.tealBtn, width: "100%", padding: "13px 0", fontSize: 14 }}>Submit Withdrawal Request</button>
+          </div>
+        </div>
+      )}
+
+      {tab === "referral" && (
+        <div style={{ maxWidth: 620 }}>
+          <div style={{ ...S.glassCard, padding: isMobile ? 20 : 28 }}>
+            <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 6 }}>Referral Dashboard</div>
+            <div style={{ color: PALETTE.textMuted, fontSize: 13, marginBottom: 24 }}>Earn 5% commission on every investment your referrals make.</div>
+            <div style={{ background: "rgba(0,0,0,0.4)", borderRadius: 12, padding: "14px 16px", display: "flex", alignItems: "center", gap: 12, marginBottom: 24, flexWrap: "wrap" }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 11, color: PALETTE.textMuted, marginBottom: 3 }}>Your Referral Link</div>
+                <div style={{ fontFamily: "monospace", fontSize: 12, color: PALETTE.teal, wordBreak: "break-all" }}>https://aetherforge.io/ref/AF-{user.name?.slice(0,4)?.toUpperCase()}</div>
+              </div>
+              <button style={{ ...S.tealBtn, padding: "9px 16px", fontSize: 12, flexShrink: 0 }}>Copy</button>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+              {[["7", "Total Referrals"], ["$348.50", "Earned"], ["$82.00", "Pending"]].map(([v, l]) => (
+                <div key={l} style={{ background: "rgba(0,0,0,0.3)", borderRadius: 10, padding: isMobile ? "14px 12px" : "18px 16px" }}>
+                  <div style={{ fontSize: isMobile ? 18 : 22, fontWeight: 800, color: PALETTE.gold }}>{v}</div>
