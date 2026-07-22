@@ -297,4 +297,203 @@ function PlanCard({ plan, onSelect }) {
         </div>
         <div style={{ textAlign: "right" }}>
           <div style={{ fontSize: 26, fontWeight: 900, color: PALETTE.teal }}>{plan.daily}%</div>
-          <div style={{ fontSize: 11, color: PALETTE.textMuted }}>Daily ROI</div>
+          <div style={{ fontSize: 11, color: PALETTE.textMuted }}>Daily ROI</div>        </div>
+      </div>
+      <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: 10, padding: "12px 14px", marginBottom: 16, fontSize: 13 }}>
+        {[["Range", `${fmtUSD(plan.min)} – ${fmtUSD(plan.max)}`], ["Duration", `${plan.duration} Days`], ["Total Return", `+${totalReturn.toFixed(1)}%`]].map(([l, v], i) => (
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: i < 2 ? 8 : 0 }}>
+            <span style={{ color: PALETTE.textMuted }}>{l}</span>
+            <span style={{ fontWeight: 700, color: i === 2 ? PALETTE.success : PALETTE.text }}>{v}</span>
+          </div>
+        ))}
+      </div>
+      <div style={{ marginBottom: 18 }}>
+        {plan.features.map((f, i) => (
+          <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6, alignItems: "center" }}>
+            <span style={{ color: PALETTE.teal, fontSize: 13, flexShrink: 0 }}>✓</span>
+            <span style={{ fontSize: 13, color: PALETTE.textMuted }}>{f}</span>
+          </div>
+        ))}
+      </div>
+      <button onClick={() => onSelect(plan)} style={{ ...S.tealBtn, width: "100%", padding: "13px 0", fontSize: 14 }}>Choose {plan.name}</button>
+    </div>
+  );
+}
+
+// ── PAGES ────────────────────────────────────────────────────────────────────
+function HomePage({ prices, setPage, setShowAuth, setSelectedPlan }) {
+  const isMobile = useIsMobile();
+
+  return (
+    <div>
+      {/* HERO */}
+      <div style={{ position: "relative", minHeight: isMobile ? "80vh" : "88vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: isMobile ? "60px 20px 48px" : "80px 24px 64px", background: "radial-gradient(ellipse 80% 60% at 50% -10%,rgba(0,212,170,0.12) 0%,transparent 60%)" }}>
+        <div style={{ position: "absolute", inset: 0, opacity: 0.04, backgroundImage: `linear-gradient(${PALETTE.teal} 1px,transparent 1px),linear-gradient(90deg,${PALETTE.teal} 1px,transparent 1px)`, backgroundSize: "60px 60px", pointerEvents: "none" }} />
+        <div style={{ position: "relative", maxWidth: 800, width: "100%" }}>
+          <div style={{ ...S.badge, marginBottom: 18 }}>FCA Regulated · MAS Licensed · Est. 2019</div>
+          <h1 style={{ fontSize: isMobile ? "clamp(30px,9vw,42px)" : "clamp(42px,5.5vw,72px)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 1.08, marginBottom: 20, background: `linear-gradient(135deg,#E8EDF5 0%,#E8EDF5 40%,${PALETTE.teal} 65%,${PALETTE.gold} 100%)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            Institutional-Grade<br />Trading Returns<br /><span style={{ fontStyle: "italic" }}>for Everyone.</span>
+          </h1>
+          <p style={{ fontSize: isMobile ? 14 : 17, color: PALETTE.textMuted, maxWidth: 560, margin: "0 auto 32px", lineHeight: 1.75 }}>
+            AI-powered strategies used by hedge funds — starting from just $50. Compliant, transparent, and proven.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <button onClick={() => setShowAuth("register")} style={{ ...S.tealBtn, padding: isMobile ? "14px 28px" : "15px 36px", fontSize: isMobile ? 15 : 16 }}>Start Investing →</button>
+            <button onClick={() => setPage("plans")} style={{ ...S.outlineBtn, padding: isMobile ? "14px 28px" : "15px 36px", fontSize: isMobile ? 15 : 16 }}>View Plans</button>
+          </div>
+          <div style={{ display: "flex", gap: isMobile ? 16 : 28, justifyContent: "center", marginTop: 36, flexWrap: "wrap" }}>
+            {[["🏛️", "FCA & MAS Regulated"], ["⚡", "Same-Day Withdrawals"], ["🔒", "AES-256 Encrypted"], ["🤖", "AI Trading Engine"]].map(([ic, t]) => (
+              <div key={t} style={{ display: "flex", alignItems: "center", gap: 6, color: PALETTE.textMuted, fontSize: isMobile ? 12 : 13 }}><span>{ic}</span><span>{t}</span></div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* STATS */}
+      <div style={{ background: PALETTE.navyLight, borderTop: "1px solid rgba(0,212,170,0.1)", borderBottom: "1px solid rgba(0,212,170,0.1)" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "32px 16px" : "52px 24px", display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 24 : 0 }}>
+          {STATS.map((s, i) => (
+            <div key={i} style={{ textAlign: "center", padding: "16px 12px", borderRight: !isMobile && i < 3 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+              <div style={{ fontSize: isMobile ? 28 : 40, marginBottom: 4 }}>{s.icon}</div>
+              <div style={{ fontSize: isMobile ? 22 : 36, fontWeight: 900, color: PALETTE.teal, letterSpacing: "-0.03em" }}>{s.value}</div>
+              <div style={{ color: PALETTE.textMuted, fontSize: 13, marginTop: 2 }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* PLANS PREVIEW */}
+      <div style={{ background: PALETTE.navyLight, padding: isMobile ? "48px 16px" : "72px 24px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <div style={S.badge}>Investment Plans</div>
+            <h2 style={{ fontSize: isMobile ? 26 : 40, fontWeight: 800, letterSpacing: "-0.03em", marginTop: 12, marginBottom: 10 }}>Choose Your Path to Returns</h2>
+            <div style={{ color: PALETTE.textMuted, fontSize: isMobile ? 13 : 15 }}>Daily compounding returns. Principal protected.</div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(260px,1fr))", gap: 16 }}>
+            {PLANS.slice(0, isMobile ? 3 : 4).map(p => (
+              <PlanCard key={p.id} plan={p} onSelect={(plan) => { setSelectedPlan(plan); setPage("payment"); }} />
+            ))}
+          </div>
+          <div style={{ textAlign: "center", marginTop: 28 }}>
+            <button onClick={() => setPage("plans")} style={{ ...S.outlineBtn, padding: "13px 36px", fontSize: 14 }}>View All 8 Plans →</button>
+          </div>
+        </div>
+      </div>
+
+      {/* LIVE TRADES */}
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "48px 16px" : "72px 24px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+          <div>
+            <div style={S.badge}>Live Activity</div>
+            <h2 style={{ fontSize: isMobile ? 22 : 28, fontWeight: 700, marginTop: 10 }}>Recent Platform Trades</h2>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: PALETTE.success, display: "inline-block" }} />
+            <span style={{ color: PALETTE.success, fontSize: 13 }}>Live</span>
+          </div>
+        </div>
+        {isMobile ? (
+          // Mobile card layout for trades
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {LIVE_TRADES.map((t, i) => (
+              <div key={i} style={{ ...S.glassCard, padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontWeight: 700, fontSize: 14 }}>{t.asset}</span>
+                    <span style={{ background: t.type === "BUY" ? "rgba(72,187,120,0.15)" : "rgba(245,101,101,0.15)", color: t.type === "BUY" ? PALETTE.success : PALETTE.danger, borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 700 }}>{t.type}</span>
+                  </div>
+                  <div style={{ fontSize: 12, color: PALETTE.textMuted, fontFamily: 
+"monospace" }}>{t.time}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ color: PALETTE.success, fontWeight: 700, fontSize: 15 }}>+{fmtUSD(t.pnl)}</div>
+                  <div style={{ color: PALETTE.success, fontSize: 12 }}>+{t.pct}%</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ ...S.glassCard, overflow: "hidden" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                  {["Time", "Asset", "Type", "Entry", "Exit", "P&L"].map(h => (
+                    <th key={h} style={{ padding: "13px 16px", textAlign: "left", fontSize: 11, color: PALETTE.textMuted, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {LIVE_TRADES.map((t, i) => (
+                  <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                    <td style={{ padding: "12px 16px", fontSize: 12, fontFamily: "monospace", color: PALETTE.textMuted }}>{t.time}</td>
+                    <td style={{ padding: "12px 16px", fontWeight: 700 }}>{t.asset}</td>
+                    <td style={{ padding: "12px 16px" }}><span style={{ background: t.type === "BUY" ? "rgba(72,187,120,0.15)" : "rgba(245,101,101,0.15)", color: t.type === "BUY" ? PALETTE.success : PALETTE.danger, borderRadius: 6, padding: "3px 10px", fontSize: 12, fontWeight: 700 }}>{t.type}</span></td>
+                    <td style={{ padding: "12px 16px", fontSize: 13, fontVariantNumeric: "tabular-nums" }}>{fmtUSD(t.entry)}</td>
+                    <td style={{ padding: "12px 16px", fontSize: 13, fontVariantNumeric: "tabular-nums" }}>{fmtUSD(t.exit)}</td>
+                    <td style={{ padding: "12px 16px", color: PALETTE.success, fontWeight: 700 }}>+{fmtUSD(t.pnl)} <span style={{ fontSize: 11, opacity: .7 }}>(+{t.pct}%)</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* TESTIMONIALS */}
+      <div style={{ background: PALETTE.navyLight, padding: isMobile ? "48px 16px" : "72px 24px", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <div style={S.badge}>Testimonials</div>
+            <h2 style={{ fontSize: isMobile ? 26 : 38, fontWeight: 800, letterSpacing: "-0.03em", marginTop: 12 }}>What Our Investors Say</h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2,1fr)", gap: 16 }}>
+            {TESTIMONIALS.map((t, i) => (
+              <div key={i} style={{ ...S.glassCard, padding: 24 }}>
+                <div style={{ color: PALETTE.gold, marginBottom: 10, fontSize: 16 }}>{"★".repeat(t.stars)}</div>
+                <div style={{ color: PALETTE.textMuted, fontSize: 14, lineHeight: 1.75, marginBottom: 18, fontStyle: "italic" }}>"{t.text}"</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: "50%", background: `linear-gradient(135deg,${PALETTE.steel},${PALETTE.teal})`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 12, flexShrink: 0 }}>{t.img}</div>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 14 }}>{t.name}</div>
+                    <div style={{ fontSize: 12, color: PALETTE.textMuted }}>{t.role} · {t.loc}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div style={{ background: "linear-gradient(135deg,rgba(0,212,170,0.07) 0%,rgba(201,168,76,0.05) 100%)", borderTop: "1px solid rgba(0,212,170,0.12)", borderBottom: "1px solid rgba(0,212,170,0.12)", padding: isMobile ? "52px 20px" : "72px 24px", textAlign: "center" }}>
+        <h2 style={{ fontSize: isMobile ? 24 : 36, fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 12 }}>Ready to Start Growing Your Wealth?</h2>
+        <div style={{ color: PALETTE.textMuted, marginBottom: 28, fontSize: isMobile ? 14 : 16 }}>Join 284,000+ investors. Minimum investment: $50.</div>
+        <button onClick={() => setShowAuth("register")} style={{ ...S.tealBtn, padding: isMobile ? "14px 32px" : "15px 44px", fontSize: isMobile ? 15 : 16 }}>Open Your Account →</button>
+      </div>
+    </div>
+  );
+}
+
+function PlansPage({ setPage, setSelectedPlan }) {
+  const isMobile = useIsMobile();
+  return (
+    <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "40px 16px" : "60px 24px" }}>
+      <div style={{ textAlign: "center", marginBottom: isMobile ? 36 : 52 }}>
+        <div style={S.badge}>Investment Plans</div>
+        <h1 style={{ fontSize: isMobile ? 28 : 44, fontWeight: 800, letterSpacing: "-0.03em", marginTop: 12, marginBottom: 12 }}>Transparent Plans. Real Returns.</h1>
+        <div style={{ color: PALETTE.textMuted, maxWidth: 520, margin: "0 auto", fontSize: isMobile ? 13 : 15 }}>Every plan powered by AI. All include principal return at maturity.</div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill,minmax(260px,1fr))", gap: 16 }}>
+        {PLANS.map(p => <PlanCard key={p.id} plan={p} onSelect={(plan) => { setSelectedPlan(plan); setPage("payment"); }} />)}
+      </div>
+      <div style={{ ...S.glassCard, padding: 20, marginTop: 32, borderColor: "rgba(201,168,76,0.2)" }}>
+        <div style={{ fontSize: 12, color: PALETTE.textMuted, lineHeight: 1.7 }}>⚠️ <strong style={{ color: PALETTE.gold }}>Risk Disclosure:</strong> All investments carry risk. Past performance is not a guarantee of future results. Capital at risk. AetherForge Exchange Ltd is FCA authorised (FRN: 914829) and MAS licensed (CMS No. 101-000314-1).</div>
+      </div>
+    </div>
+  );
+}
+
+function MarketsPage({ prices }) {
+  const isMobile = useIsMobile();
+  return (
