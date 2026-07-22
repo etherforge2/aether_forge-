@@ -605,12 +605,13 @@ function DashboardPage({ user, setPage, setShowAuth }) {
       </div>
 
       {/* Balance cards */}
+    {/* Balance cards */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: 12, marginBottom: 24 }}>
         {[
-          { label: "Total Balance", val: fmtUSD(mockBalance), color: PALETTE.teal, icon: "💰" },
-          { label: "Total Profit", val: fmtUSD(mockProfit), color: PALETTE.success, icon: "📈" },
-          { label: "Active Plans", val: "2", color: PALETTE.gold, icon: "⚡" },
-          { label: "Withdrawn", val: fmtUSD(5200), color: PALETTE.textMuted, icon: "🏦" },
+          { label: "Total Balance", val: fmtUSD(user.balance || 0), color: PALETTE.teal, icon: "💰" },
+          { label: "Total Profit", val: fmtUSD(1842.30), color: PALETTE.success, icon: "📈" }, // temporary
+          { label: "Active Plans", val: activeInvestments.length.toString(), color: PALETTE.gold, icon: "⚡" },
+          { label: "Withdrawn", val: fmtUSD(5200), color: PALETTE.textMuted, icon: "🏦" }, // temporary
         ].map((c, i) => (
           <div key={i} style={{ ...S.glassCard, padding: isMobile ? "14px 14px" : "18px 20px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
@@ -621,6 +622,7 @@ function DashboardPage({ user, setPage, setShowAuth }) {
           </div>
         ))}
       </div>
+
 
       {/* Tabs */}
       <div style={{ display: "flex", gap: 4, marginBottom: 24, background: "rgba(0,0,0,0.3)", borderRadius: 12, padding: 4, overflowX: "auto", width: "fit-content", maxWidth: "100%" }}>
