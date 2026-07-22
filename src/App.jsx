@@ -1043,10 +1043,6 @@ function Footer({ setPage }) {
 }
 
 // ── ROOT ─────────────────────────────────────────────────────────────────────
-// Add this import at the very top
-import { supabase } from './supabaseClient';
-import { useEffect } from 'react';   // make sure this is already imported
-
 export default function App() {
   const [page, setPage] = useState("home");
   const [user, setUser] = useState(null);
