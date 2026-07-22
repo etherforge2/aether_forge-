@@ -549,6 +549,36 @@ function MarketsPage({ prices }) {
 function DashboardPage({ user, setPage, setShowAuth }) {
   const isMobile = useIsMobile();
   const [tab, setTab] = useState("overview");
+  const [activeInvestments, setActiveInvestments] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+
+  // Load real data
+  useEffect(() => {
+    if (!user) return;
+
+    const loadData = async () => {
+      // Load investments
+      const { data: investments } = await supabase
+        .from('investments')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'active');
+
+      setActiveInvestments(investments || []);
+
+      // Load transactions
+      const { data: txs } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      setTransactions(txs || []);
+    };
+
+    loadData();
+  }, [user]);
 
   if (!user) return (
     <div style={{ maxWidth: 480, margin: "80px auto", padding: "0 16px", textAlign: "center" }}>
@@ -561,11 +591,7 @@ function DashboardPage({ user, setPage, setShowAuth }) {
     </div>
   );
 
-  const tabs = ["overview", "trades", "withdraw", "referral"];
-  const mockBalance = 12480.50, mockProfit = 1842.30;
-
-  return (
-    <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "24px 16px" : "40px 24px" }}>
+  // ... rest of your DashboardPage stays the same for now
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28, flexWrap: "wrap", gap: 12 }}>
         <div>
