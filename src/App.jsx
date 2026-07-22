@@ -1043,6 +1043,10 @@ function Footer({ setPage }) {
 }
 
 // ── ROOT ─────────────────────────────────────────────────────────────────────
+// Add this import at the very top
+import { supabase } from './supabaseClient';
+import { useEffect } from 'react';   // make sure this is already imported
+
 export default function App() {
   const [page, setPage] = useState("home");
   const [user, setUser] = useState(null);
@@ -1051,12 +1055,64 @@ export default function App() {
   const prices = usePrices();
   const isMobile = useIsMobile();
 
+  // Listen to auth changes
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        loadUserProfile(session.user.id);
+      }
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        loadUserProfile(session.user.id);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const loadUserProfile = async (userId) => {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (profile) {
+      setUser({
+        id: userId,
+        name: profile.name,
+        email: profile.email,
+        balance: profile.balance || 0
+      });
+    }
+  };
+
   const nav = useCallback((p) => {
-    if (p === "dashboard" && !user) { setShowAuth("login"); return; }
-    setPage(p); window.scrollTo({ top: 0, behavior: "smooth" });
+    if (p === "dashboard" && !user) {
+      setShowAuth("login");
+      return;
+    }
+    setPage(p);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [user]);
 
-  const onAuth = (u) => { setUser(u); setShowAuth(null); setPage("dashboard"); };
+  const onAuth = (u) => {
+    setUser(u);
+    setShowAuth(null);
+    setPage("dashboard");
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setPage("home");
+  };
 
   const renderPage = () => {
     switch (page) {
@@ -1079,17 +1135,16 @@ export default function App() {
         *{box-sizing:border-box;margin:0;padding:0}
         input:focus,select:focus,textarea:focus{border-color:rgba(0,212,170,.5)!important;outline:none}
         button:active{opacity:.8}
-    ::-webkit-scrollbar{width:4px;height:4px}
+        ::-webkit-scrollbar{width:4px;height:4px}
         ::-webkit-scrollbar-thumb{background:rgba(0,212,170,.3);border-radius:2px}
         table tr:hover{background:rgba(255,255,255,.02)}
       `}</style>
 
-      <Nav page={page} setPage={nav} user={user} setUser={setUser} setShowAuth={setShowAuth} />
+      <Nav page={page} setPage={nav} user={user} setUser={handleLogout} setShowAuth={setShowAuth} />
       <LiveTicker prices={prices} />
       <main style={{ minHeight: "80vh" }}>{renderPage()}</main>
       <Footer setPage={nav} />
 
-      {/* Mobile sticky CTA */}
       {isMobile && !user && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50, background: "rgba(8,12,24,0.97)", backdropFilter: "blur(12px)", borderTop: "1px solid rgba(0,212,170,0.15)", padding: "10px 16px", display: "flex", gap: 10 }}>
           <button onClick={() => setShowAuth("login")} style={{ ...S.outlineBtn, flex: 1, padding: "12px 0", fontSize: 14 }}>Login</button>
