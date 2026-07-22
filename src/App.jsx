@@ -896,3 +896,177 @@ function ContactPage() {
     <div style={{ maxWidth: 900, margin: "0 auto", padding: isMobile ? "40px 16px" : "60px 24px" }}>
       <div style={{ textAlign: "center", marginBottom: 44 }}>
         <div style={S.badge}>24/7 Support</div>
+        <h1 style={{ fontSize: isMobile ? 26 : 40, fontWeight: 800, letterSpacing: "-0.03em", marginTop: 12, marginBottom: 10 }}>We're Always Here</h1>
+        <div style={{ color: PALETTE.textMuted, fontSize: 14 }}>Multilingual support team online around the clock.</div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {[
+            { icon: "📧", label: "Email", val: "support@aetherforge.io", note: "Response within 2 hours" },
+            { icon: "💬", label: "Live Chat", val: "Available on website", note: "Wait < 3 minutes" },
+            { icon: "📞", label: "Phone (UK)", val: "+44 20 7946 0834", note: "Mon–Fri 8am–8pm GMT" },
+            { icon: "🏢", label: "HQ", val: "22 Bishopsgate, London EC2N 4BQ", note: "By appointment" },
+          ].map((c, i) => (
+            <div key={i} style={{ ...S.glassCard, padding: "16px 18px", display: "flex", gap: 14, alignItems: "flex-start" }}>
+              <span style={{ fontSize: 22, flexShrink: 0 }}>{c.icon}</span>
+              <div>
+                <div style={{ fontSize: 11, color: PALETTE.textMuted, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 3 }}>{c.label}</div>
+                <div style={{ fontWeight: 700, marginBottom: 2, fontSize: 14 }}>{c.val}</div>
+                <div style={{ fontSize: 12, color: PALETTE.textMuted }}>{c.note}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{ ...S.glassCard, padding: isMobile ? 20 : 28 }}>
+          <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 20 }}>Send a Message</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {[["Full Name","text","John Smith"],["Email","email","john@example.com"]].map(([l,t,p]) => (
+              <div key={l}><label style={S.label}>{l}</label><input style={S.input} type={t} placeholder={p} /></div>
+            ))}
+            <div><label style={S.label}>Subject</label>
+              <select style={{ ...S.input, appearance: "none" }}>
+                {["Account Inquiry","Deposit / Payment","Withdrawal","Technical Support","KYC","Other"].map(o => <option key={o}>{o}</option>)}
+              </select>
+            </div>
+            <div><label style={S.label}>Message</label><textarea style={{ ...S.input, minHeight: 100, resize: "vertical", fontFamily: "inherit" }} placeholder="How can we help?" /></div>
+            <button style={{ ...S.tealBtn, width: "100%", padding: "13px 0", fontSize: 14 }}>Send Message →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AboutPage() {
+  const isMobile = useIsMobile();
+  return (
+    <div style={{ maxWidth: 960, margin: "0 auto", padding: isMobile ? "40px 16px" : "60px 24px" }}>
+      <div style={{ textAlign: "center", marginBottom: 48 }}>
+        <div style={S.badge}>Our Story</div>
+        <h1 style={{ fontSize: isMobile ? 26 : 42, fontWeight: 800, letterSpacing: "-0.03em", marginTop: 12, marginBottom: 12 }}>Democratising Institutional Trading</h1>
+        <div style={{ color: PALETTE.textMuted, maxWidth: 560, margin: "0 auto", fontSize: isMobile ? 13 : 15, lineHeight: 1.8 }}>Built in Singapore. Regulated in London. Serving investors in 67 countries.</div>
+      </div>
+      <div style={{ ...S.glassCard, padding: isMobile ? 22 : 36, marginBottom: 28, background: "linear-gradient(135deg,rgba(0,212,170,0.04),rgba(201,168,76,0.02))" }}>
+        <p style={{ fontSize: isMobile ? 13 : 15, color: PALETTE.textMuted, lineHeight: 2.0 }}>
+          AetherForge Exchange was founded in 2019 by senior quantitative researchers and algorithmic traders previously at Goldman Sachs, Citadel Securities, and Renaissance Technologies. Our AI trading engine executes tens of thousands of positions daily across crypto, FX, commodities, and equities — generating $892M+ in verified withdrawals to date and maintaining a 91.3% trade win rate.
+        </p>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(3,1fr)", gap: 14 }}>
+        {[
+          { icon: "🧠", title: "Quant Team", desc: "84 PhDs from Goldman, JP Morgan, and Citadel." },
+          { icon: "🔬", title: "Research-Driven", desc: "18,000+ hours of backtesting and model calibration." },
+          { icon: "🌐", title: "Global Ops", desc: "Offices in London, Singapore, and Dubai." },
+          { icon: "🏛️", title: "FCA Regulated", desc: "Fully compliant in UK, Singapore, and Australia." },
+          { icon: "🔒", title: "Cold Storage", desc: "98% of assets in offline multi-sig cold storage." },
+          { icon: "⚖️", title: "Transparent Fees", desc: "No hidden fees. Profit-only commission model." },
+        ].map((f, i) => (
+          <div key={i} style={{ ...S.glassCard, padding: isMobile ? 18 : 24 }}>
+            <div style={{ fontSize: 26, marginBottom: 10 }}>{f.icon}</div>
+            <div style={{ fontWeight: 700, marginBottom: 6, fontSize: 14 }}>{f.title}</div>
+            <div style={{ fontSize: 12, color: PALETTE.textMuted, lineHeight: 1.6 }}>{f.desc}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ ...S.glassCard, padding: isMobile ? 18 : 28, marginTop: 24, borderColor: "rgba(201,168,76,0.2)" }}>
+        <div style={{ fontSize: 12, color: PALETTE.gold, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>Regulatory Information</div>
+        <div style={{ fontSize: 12, color: PALETTE.textMuted, lineHeight: 1.8 }}>AetherForge Exchange Ltd is incorporated in England & Wales (Co. No. 14829371), authorised by the FCA (FRN: 914829). AetherForge Asia Pte. Ltd. holds a MAS CMS Licence (No. 101-000314-1). <strong style={{ color: PALETTE.gold }}>Trading involves significant risk. Capital at risk.</strong></div>
+      </div>
+    </div>
+  );
+}
+
+function Footer({ setPage }) {
+  const isMobile = useIsMobile();
+  return (
+    <footer style={{ background: PALETTE.navyLight, borderTop: "1px solid rgba(255,255,255,0.04)", padding: isMobile ? "40px 16px 80px" : "52px 24px 40px" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "2fr 1fr 1fr 1fr", gap: isMobile ? 28 : 40, marginBottom: 36 }}>
+          <div style={{ gridColumn: isMobile ? "1 / -1" : "auto" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <div style={{ width: 28, height: 28, borderRadius: 7, background: `linear-gradient(135deg,${PALETTE.teal},#006B55)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: "#fff", fontWeight: 900 }}>⬡</div>
+              <span style={{ fontSize: 17, fontWeight: 800 }}>Aether<span style={{ color: PALETTE.teal }}>Forge</span></span>
+            </div>
+            <div style={{ fontSize: 12, color: PALETTE.textMuted, lineHeight: 1.8, marginBottom: 14, maxWidth: 260 }}>Institutional-grade AI trading for everyday investors. FCA regulated. MAS licensed.</div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {["🇬🇧 FCA", "🇸🇬 MAS", "🔒 SSL"].map(b => <span key={b} style={{ ...S.badge, fontSize: 10, padding: "3px 10px" }}>{b}</span>)}
+            </div>
+          </div>
+          {[
+            { title: "Platform", links: ["Home","About","Plans","Markets","Dashboard"] },
+            { title: "Account", links: ["Register","Login","Affiliate","FAQ","Contact"] },
+            { title: "Legal", links: ["Privacy Policy","Terms","Risk Disclaimer","AML Policy"] },
+          ].map((col, i) => (
+            <div key={i}>
+              <div style={{ fontWeight: 700, marginBottom: 12, fontSize: 13 }}>{col.title}</div>
+              {col.links.map(l => <div key={l} onClick={() => setPage(l.toLowerCase().replace(/ /g, ""))} style={{ color: PALETTE.textMuted, fontSize: 12, marginBottom: 9, cursor: "pointer" }}>{l}</div>)}
+            </div>
+          ))}
+        </div>
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 22, fontSize: 11, color: PALETTE.textDim, lineHeight: 1.8 }}>
+          <div style={{ marginBottom: 6 }}>© 2019–2026 AetherForge Exchange Ltd. All rights reserved. FCA Authorised (FRN: 914829).</div>
+          <div>⚠️ Risk Warning: Past performance is not indicative of future results. Capital at risk. Not financial advice.</div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ── ROOT ─────────────────────────────────────────────────────────────────────
+export default function App() {
+  const [page, setPage] = useState("home");
+  const [user, setUser] = useState(null);
+  const [showAuth, setShowAuth] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const prices = usePrices();
+  const isMobile = useIsMobile();
+
+  const nav = useCallback((p) => {
+    if (p === "dashboard" && !user) { setShowAuth("login"); return; }
+    setPage(p); window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [user]);
+
+  const onAuth = (u) => { setUser(u); setShowAuth(null); setPage("dashboard"); };
+
+  const renderPage = () => {
+    switch (page) {
+      case "home": return <HomePage prices={prices} setPage={nav} setShowAuth={setShowAuth} setSelectedPlan={setSelectedPlan} />;
+      case "plans": return <PlansPage setPage={nav} setSelectedPlan={setSelectedPlan} />;
+      case "markets": return <MarketsPage prices={prices} />;
+      case "dashboard": return <DashboardPage user={user} setPage={nav} setShowAuth={setShowAuth} />;
+      case "payment": return <PaymentPage plan={selectedPlan} user={user} setPage={nav} setShowAuth={setShowAuth} />;
+      case "affiliate": return <AffiliatePage />;
+      case "faq": return <FAQPage />;
+      case "contact": return <ContactPage />;
+      case "about": return <AboutPage />;
+      default: return <HomePage prices={prices} setPage={nav} setShowAuth={setShowAuth} setSelectedPlan={setSelectedPlan} />;
+    }
+  };
+
+  return (
+    <div style={{ background: PALETTE.void, color: PALETTE.text, fontFamily: "-apple-system,'SF Pro Display','Segoe UI',system-ui,sans-serif", minHeight: "100vh", overflowX: "hidden" }}>
+      <style>{`
+        *{box-sizing:border-box;margin:0;padding:0}
+        input:focus,select:focus,textarea:focus{border-color:rgba(0,212,170,.5)!important;outline:none}
+        button:active{opacity:.8}
+    ::-webkit-scrollbar{width:4px;height:4px}
+        ::-webkit-scrollbar-thumb{background:rgba(0,212,170,.3);border-radius:2px}
+        table tr:hover{background:rgba(255,255,255,.02)}
+      `}</style>
+
+      <Nav page={page} setPage={nav} user={user} setUser={setUser} setShowAuth={setShowAuth} />
+      <LiveTicker prices={prices} />
+      <main style={{ minHeight: "80vh" }}>{renderPage()}</main>
+      <Footer setPage={nav} />
+
+      {/* Mobile sticky CTA */}
+      {isMobile && !user && (
+        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50, background: "rgba(8,12,24,0.97)", backdropFilter: "blur(12px)", borderTop: "1px solid rgba(0,212,170,0.15)", padding: "10px 16px", display: "flex", gap: 10 }}>
+          <button onClick={() => setShowAuth("login")} style={{ ...S.outlineBtn, flex: 1, padding: "12px 0", fontSize: 14 }}>Login</button>
+          <button onClick={() => setShowAuth("register")} style={{ ...S.tealBtn, flex: 2, padding: "12px 0", fontSize: 14 }}>Get Started</button>
+        </div>
+      )}
+
+      {showAuth && <AuthModal mode={showAuth} onClose={() => setShowAuth(null)} onSuccess={onAuth} />}
+    </div>
+  );
+}
